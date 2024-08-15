@@ -17,16 +17,14 @@ YOUTUBE_IES = filter(
     inspect.getmembers(importlib.import_module('yt_dlp.extractor.youtube'), inspect.isclass)
 )
 
-# YouTube TV (TV HTML5)
+# YouTube TV (TVHTML5)
 # TODO: dynamically extract these
-# noinspection SpellCheckingInspection
 _CLIENT_ID = '861556708454-d6dlm3lh05idd8npek18k6be8ba3oc68.apps.googleusercontent.com'
-# noinspection SpellCheckingInspection
 _CLIENT_SECRET = 'SboVhoG9s0rNafixCSGGKXAT'
 _SCOPES = 'https://gdata.youtube.com https://www.googleapis.com/auth/youtube'
 
 
-# noinspection PyAttributeOutsideInit,SpellCheckingInspection
+# noinspection SpellCheckingInspection,PyAttributeOutsideInit,PyMethodMayBeStatic
 class YouTubeOAuth2Handler(InfoExtractor):
     def store_token(self, token_data):
         self.cache.store('youtube-oauth2', 'token_data', token_data)
@@ -37,8 +35,7 @@ class YouTubeOAuth2Handler(InfoExtractor):
             self._TOKEN_DATA = self.cache.load('youtube-oauth2', 'token_data')
         return self._TOKEN_DATA
 
-    @staticmethod
-    def validate_token_data(token_data):
+    def validate_token_data(self, token_data):
         return all(key in token_data for key in ('access_token', 'expires', 'refresh_token', 'token_type'))
 
     def initialize_oauth(self):
