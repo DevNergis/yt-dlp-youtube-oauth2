@@ -17,14 +17,26 @@ YOUTUBE_IES = filter(
     inspect.getmembers(importlib.import_module('yt_dlp.extractor.youtube'), inspect.isclass)
 )
 
-# YouTube TV (TVHTML5)
+# YouTube TV (TV HTML5)
 # TODO: dynamically extract these
+# noinspection SpellCheckingInspection
 _CLIENT_ID = '861556708454-d6dlm3lh05idd8npek18k6be8ba3oc68.apps.googleusercontent.com'
+# noinspection SpellCheckingInspection
 _CLIENT_SECRET = 'SboVhoG9s0rNafixCSGGKXAT'
-_SCOPES = 'http://gdata.youtube.com https://www.googleapis.com/auth/youtube'
+_SCOPES = 'https://gdata.youtube.com https://www.googleapis.com/auth/youtube'
 
 
+def validate_token_data(token_data):
+    return all(key in token_data for key in ('access_token', 'expires', 'refresh_token', 'token_type'))
+
+
+# noinspection SpellCheckingInspection
 class YouTubeOAuth2Handler(InfoExtractor):
+    def __init__(self, downloader=None):
+        super().__init__(downloader)
+        self.is_authenticated = None
+        self._TOKEN_DATA = None
+
     def store_token(self, token_data):
         self.cache.store('youtube-oauth2', 'token_data', token_data)
         self._TOKEN_DATA = token_data
@@ -34,13 +46,10 @@ class YouTubeOAuth2Handler(InfoExtractor):
             self._TOKEN_DATA = self.cache.load('youtube-oauth2', 'token_data')
         return self._TOKEN_DATA
 
-    def validate_token_data(self, token_data):
-        return all(key in token_data for key in ('access_token', 'expires', 'refresh_token', 'token_type'))
-
     def initialize_oauth(self):
         token_data = self.get_token()
 
-        if token_data and not self.validate_token_data(token_data):
+        if token_data and not validate_token_data(token_data):
             self.report_warning('Invalid cached OAuth2 token data')
             token_data = None
 
@@ -61,10 +70,10 @@ class YouTubeOAuth2Handler(InfoExtractor):
             return
 
         token_data = self.initialize_oauth()
-        # These are only require for cookies and interfere with OAuth2
+        # These are only required for cookies and interfere with OAuth2
         request.headers.pop('X-Goog-PageId', None)
         request.headers.pop('X-Goog-AuthUser', None)
-        # In case user tries to use cookies at the same time
+        # In case the user tries to use cookies at the same time
         if 'Authorization' in request.headers:
             self.report_warning(
                 'Youtube cookies have been provided, but OAuth2 is being used.'
@@ -128,7 +137,7 @@ class YouTubeOAuth2Handler(InfoExtractor):
                     'client_id': _CLIENT_ID,
                     'client_secret': _CLIENT_SECRET,
                     'code': code_response['device_code'],
-                    'grant_type': 'http://oauth.net/grant_type/device/1.0'
+                    'grant_type': 'https://oauth.net/grant_type/device/1.0'
                 }).encode(),
                 headers={'Content-Type': 'application/json', '__youtube_oauth__': True})
 
@@ -174,5 +183,5 @@ for _, ie in YOUTUBE_IES:
         def is_authenticated(self):
             if self._use_oauth2:
                 token_data = self.get_token()
-                return token_data and self.validate_token_data(token_data)
+                return token_data and validate_token_data(token_data)
             return super().is_authenticated

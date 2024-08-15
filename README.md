@@ -14,12 +14,12 @@ If yt-dlp is installed through `pip` or `pipx`, you can install the plugin with 
 
 pip:
 ```
-python3 -m pip install -U https://github.com/coletdjnz/yt-dlp-youtube-oauth2/archive/refs/heads/master.zip
+python3 -m pip install -U yt-dlp-youtube-oauth2
 ```
 
 pipx:
 ```
-pipx inject yt-dlp https://github.com/coletdjnz/yt-dlp-youtube-oauth2/archive/refs/heads/master.zip
+pipx inject yt-dlp yt-dlp-youtube-oauth2
 ```
 
 If you have not installed yt-dlp through pip or pipx, see [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plugins) for the other methods this plugin package can be installed.
