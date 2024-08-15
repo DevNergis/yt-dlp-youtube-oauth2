@@ -14,7 +14,7 @@ If yt-dlp is installed through `pip` or `pipx`, you can install the plugin with 
 
 pip:
 ```
-python3 -m pip install -U yt-dlp-youtube-oauth2
+pip install -U yt-dlp-youtube-oauth2
 ```
 
 pipx:
