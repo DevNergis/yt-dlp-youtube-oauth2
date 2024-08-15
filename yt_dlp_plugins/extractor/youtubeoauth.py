@@ -30,13 +30,8 @@ def validate_token_data(token_data):
     return all(key in token_data for key in ('access_token', 'expires', 'refresh_token', 'token_type'))
 
 
-# noinspection SpellCheckingInspection
+# noinspection SpellCheckingInspection,PyAttributeOutsideInit
 class YouTubeOAuth2Handler(InfoExtractor):
-    def __init__(self, downloader=None):
-        super().__init__(downloader)
-        self.is_authenticated = None
-        self._TOKEN_DATA = None
-
     def store_token(self, token_data):
         self.cache.store('youtube-oauth2', 'token_data', token_data)
         self._TOKEN_DATA = token_data
@@ -162,6 +157,7 @@ class YouTubeOAuth2Handler(InfoExtractor):
 
 
 for _, ie in YOUTUBE_IES:
+    # noinspection PyUnresolvedReferences
     class _YouTubeOAuth(ie, YouTubeOAuth2Handler, plugin_name='oauth2'):
         _NETRC_MACHINE = 'youtube'
         _use_oauth2 = False
